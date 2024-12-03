@@ -1,14 +1,17 @@
-# pip install virtualenv
 # .venv\Scripts\activate 
+
+# pip install virtualenv
+
 # pip install pyserial
 # pip install matplotlib
 
-# Executar Transmissao.ino (pisca led)
-# Executar SX127x_Receive_Valor_Tensao.ino
+# Executar JVTech_Transmit_Leitura_3V3
+# Executar JVTech_Receive_Valor_Tensao
 
 import serial
 import matplotlib.pyplot as plt
 import time
+import random
 
 import matplotlib
 matplotlib.use('Qt5Agg')
@@ -17,6 +20,11 @@ matplotlib.use('Qt5Agg')
 # Configuração da porta serial
 SERIAL_PORT = "COM8"  # Substitua pelo nome correto da porta no seu sistema
 BAUD_RATE = 9600  # Ajuste para o valor configurado no ESP32
+
+def gerar_valor_tensao():
+    tensao_aleatoria = random.uniform(1, 3)
+    return tensao_aleatoria
+
 
 def main():
     

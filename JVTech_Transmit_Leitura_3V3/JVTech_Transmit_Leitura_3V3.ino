@@ -12,7 +12,7 @@ SX1276 radio = new Module(5, 26, 14, 3);
 int transmissionState = RADIOLIB_ERR_NONE;
 
 // define the message to be sent
-String message = "3.3";
+float message = 3.3;
 
 void setup() {
   Serial.begin(9600);
@@ -52,8 +52,6 @@ volatile bool transmittedFlag = false;
 
 // this function is called when a complete packet
 // is transmitted by the module
-// IMPORTANT: this function MUST be 'void' type
-//            and MUST NOT have any arguments!
 #if defined(ESP8266) || defined(ESP32)
   ICACHE_RAM_ATTR
 #endif
@@ -98,8 +96,8 @@ void loop() {
 
     // you can transmit C-string or Arduino string up to
     // 255 characters long
-    String str = message;
-    transmissionState = radio.startTransmit(str);
+    //String str = message;
+    transmissionState = radio.startTransmit(message);
 
   }
 }
