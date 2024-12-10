@@ -12,10 +12,17 @@ SX1276 radio = new Module(5, 26, 14, 3);
 int transmissionState = RADIOLIB_ERR_NONE;
 
 // define the message to be sent
-float message = 3.3;
+String message;
+
+// leitura do pino GPIO36/SensVP/ADC1_0
+
+int adcPin = 36; // Terceiro pino de acordo com https://jvtech.gitbook.io/modulo-iot-jvtech/hardware/pinos
+int adcValue = 0;
+float voltage = 0.0;
 
 void setup() {
   Serial.begin(9600);
+  analogReadResolution(12); // ESP32 suporta resoluções de 9 a 12 bits
 
   // initialize SX1276 with default settings
   Serial.print(F("[SX1276] Initializing ... "));
@@ -31,11 +38,9 @@ void setup() {
   // set the function that will be called
   radio.setFrequency(915.2);
   radio.setBandwidth(125.0);
-  //radio.setSyncWord(0x34);      // Não há essa configuração no HAT 0x34 é o padrão pra redes publicas
   radio.setSpreadingFactor(9);
   radio.setCodingRate(8);
   radio.setOutputPower(22);
-  //radio.setPreambleLength(15);    // Não há essa configuração no HAT
 
   // when packet transmission is finished
   radio.setPacketSentAction(setFlag);
@@ -64,6 +69,15 @@ void setFlag(void) {
 int count = 0;
 
 void loop() {
+
+  adcValue = analogRead(adcPin);
+  voltage = (adcValue * 3.3) / 4095.0; // Convertendo para a tensão real, considerando 12 bits (0-4095) e Vref de 3.3V
+  Serial.print("Tensão: ");
+  Serial.print(voltage);
+  Serial.println(" V");
+  delay(1000); // Aguarda 1 segundo
+
+
   // check if the previous transmission finished
   if(transmittedFlag) {
     // reset flag
@@ -96,8 +110,8 @@ void loop() {
 
     // you can transmit C-string or Arduino string up to
     // 255 characters long
-    //String str = message;
-    transmissionState = radio.startTransmit(message);
+    String voltageString = String(voltage);
+    transmissionState = radio.startTransmit(voltageString);
 
   }
 }
